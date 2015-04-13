@@ -1,0 +1,54 @@
+# crawlercontrollerpwm2 CMake config file
+#
+# This file sets the following variables:
+# crawlercontrollerpwm2_FOUND - Always TRUE.
+# crawlercontrollerpwm2_INCLUDE_DIRS - Directories containing the crawlercontrollerpwm2 include files.
+# crawlercontrollerpwm2_IDL_DIRS - Directories containing the crawlercontrollerpwm2 IDL files.
+# crawlercontrollerpwm2_LIBRARIES - Libraries needed to use crawlercontrollerpwm2.
+# crawlercontrollerpwm2_DEFINITIONS - Compiler flags for crawlercontrollerpwm2.
+# crawlercontrollerpwm2_VERSION - The version of crawlercontrollerpwm2 found.
+# crawlercontrollerpwm2_VERSION_MAJOR - The major version of crawlercontrollerpwm2 found.
+# crawlercontrollerpwm2_VERSION_MINOR - The minor version of crawlercontrollerpwm2 found.
+# crawlercontrollerpwm2_VERSION_REVISION - The revision version of crawlercontrollerpwm2 found.
+# crawlercontrollerpwm2_VERSION_CANDIDATE - The candidate version of crawlercontrollerpwm2 found.
+
+message(STATUS "Found crawlercontrollerpwm2-@PROJECT_VERSION@")
+set(crawlercontrollerpwm2_FOUND TRUE)
+
+find_package(<dependency> REQUIRED)
+
+#set(crawlercontrollerpwm2_INCLUDE_DIRS
+#    "@CMAKE_INSTALL_PREFIX@/include/@PROJECT_NAME_LOWER@-@PROJECT_VERSION_MAJOR@"
+#    ${<dependency>_INCLUDE_DIRS}
+#    )
+#
+#set(crawlercontrollerpwm2_IDL_DIRS
+#    "@CMAKE_INSTALL_PREFIX@/include/@PROJECT_NAME_LOWER@-@PROJECT_VERSION_MAJOR@/idl")
+set(crawlercontrollerpwm2_INCLUDE_DIRS
+    "@CMAKE_INSTALL_PREFIX@/include/@CPACK_PACKAGE_FILE_NAME@"
+    ${<dependency>_INCLUDE_DIRS}
+    )
+set(crawlercontrollerpwm2_IDL_DIRS
+    "@CMAKE_INSTALL_PREFIX@/include/@CPACK_PACKAGE_FILE_NAME@/idl")
+
+
+if(WIN32)
+    set(crawlercontrollerpwm2_LIBRARIES
+        "@CMAKE_INSTALL_PREFIX@/@LIB_INSTALL_DIR@/@CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME_LOWER@@CMAKE_STATIC_LIBRARY_SUFFIX@"
+        ${<dependency>_LIBRARIES}
+        )
+else(WIN32)
+    set(crawlercontrollerpwm2_LIBRARIES
+        "@CMAKE_INSTALL_PREFIX@/@LIB_INSTALL_DIR@/@CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME_LOWER@@CMAKE_SHARED_LIBRARY_SUFFIX@"
+        ${<dependency>_LIBRARIES}
+        )
+endif(WIN32)
+
+set(crawlercontrollerpwm2_DEFINITIONS ${<dependency>_DEFINITIONS})
+
+set(crawlercontrollerpwm2_VERSION @PROJECT_VERSION@)
+set(crawlercontrollerpwm2_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
+set(crawlercontrollerpwm2_VERSION_MINOR @PROJECT_VERSION_MINOR@)
+set(crawlercontrollerpwm2_VERSION_REVISION @PROJECT_VERSION_REVISION@)
+set(crawlercontrollerpwm2_VERSION_CANDIDATE @PROJECT_VERSION_CANDIDATE@)
+
