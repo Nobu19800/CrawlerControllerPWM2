@@ -13,7 +13,7 @@
 class LSM303DLHC
 {
 public:
-	LSM303DLHC(mraa::I2c *i2c, uint8_t Accaddr = 0x19, uint8_t Magnaddr = 0x1e, double ar = 0.2, double mr = 0.2);
+	LSM303DLHC(mraa::I2c *i2c, uint8_t Accaddr = 0x19, uint8_t Magnaddr = 0x1e, double ar = 0.2, double mr = 0.2, int mx_offset = 935, int my_offset = 320, int mz_offset = 730);
 	~LSM303DLHC();
 	
 	void reset(void);
@@ -193,7 +193,7 @@ private:
 
 	void readByte(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data);
 	void writeByte(uint8_t Address, uint8_t Register, uint8_t Data);
-
+	
 	uint8_t _Accaddr;
 	uint8_t _Magnaddr;
 	mraa::I2c *_i2c;
@@ -207,6 +207,8 @@ private:
 	uint8_t _Mscale;
 
 	i2c_smf *_smf;
+
+	int _mx_offset, _my_offset, _mz_offset;
 };
 
 

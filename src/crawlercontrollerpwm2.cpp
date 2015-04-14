@@ -338,7 +338,7 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onActivated(RTC::UniqueId ec_id)
 	{
 		if(accSensor == NULL)
 		{
-			accSensor = new LSM303DLHC(_i2c, m_Acc_addr, m_Magn_addr, 0.1, 0.1);
+			accSensor = new LSM303DLHC(_i2c, m_Acc_addr, m_Magn_addr);
 			
 		}
 	}

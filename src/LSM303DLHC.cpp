@@ -8,7 +8,7 @@
 #include <iostream>
 #include "LSM303DLHC.h"
 
-LSM303DLHC::LSM303DLHC(mraa::I2c *i2c, uint8_t Accaddr, uint8_t Magnaddr, double ar, double mr) {
+LSM303DLHC::LSM303DLHC(mraa::I2c *i2c, uint8_t Accaddr, uint8_t Magnaddr, double ar, double mr, int mx_offset, int my_offset, int mz_offset) {
 	_i2c = i2c;
 	
 	
@@ -20,6 +20,10 @@ LSM303DLHC::LSM303DLHC(mraa::I2c *i2c, uint8_t Accaddr, uint8_t Magnaddr, double
 	_Magnaddr = Magnaddr;
 
 	_smf = new i2c_smf();
+
+	_mx_offset = mx_offset;
+	_my_offset = my_offset;
+	_mz_offset = mz_offset;
 
 	reset();
 }
@@ -124,10 +128,16 @@ void LSM303DLHC::getOrientation(double &rx, double &ry, double &rz)
 	ry = atan2(lastAY,lastAZ);
 	rx = atan2(-lastAX,sqrt(lastAY*lastAY+lastAZ*lastAZ));
 
+	
+
 	double mxi = cos(ry)*lastMX + sin(rx)*sin(ry)*lastMY + cos(rx)*sin(ry)*lastMZ;
 	double myi = cos(rx)*lastMY - sin(rx)*lastMZ;
 
+	
+
 	rz = atan2(-myi,mxi);
+
+	//std::cout << rz << "\t" << lastMX << "\t" << lastMY << "\t" << lastMZ << std::endl;
 }
 
 
@@ -152,6 +162,8 @@ void LSM303DLHC::getMagn(double &mx, double &my, double &mz)
 	lastMX = _mr*mx + (1-_mr)*lastMX;
 	lastMY = _mr*my + (1-_mr)*lastMY;
 	lastMZ = _mr*mz + (1-_mr)*lastMZ;
+
+	//std::cout << mx << "\t" << my << "\t" << mz << std::endl;
 }
 
 
@@ -201,9 +213,15 @@ void LSM303DLHC::getMagnData(double &mx, double &my, double &mz) {
 
 	readByte(_Magnaddr, DLH_OUT_X_H_M, 6, Mag);
 
-	short MagnRaw_x = ((Mag[1] << 8) | Mag[0]);
-	short MagnRaw_y = ((Mag[3] << 8) | Mag[2]);
-	short MagnRaw_z = ((Mag[5] << 8) | Mag[4]);
+	short MagnRaw_x = ((Mag[0] << 8) | Mag[1]);
+	short MagnRaw_y = ((Mag[4] << 8) | Mag[5]);
+	short MagnRaw_z = ((Mag[2] << 8) | Mag[3]);
+	
+	MagnRaw_x += _mx_offset;
+	MagnRaw_y += _my_offset;
+	MagnRaw_z += _mz_offset;
+
+	//std::cout << MagnRaw_x << "\t" << MagnRaw_y << "\t" << MagnRaw_z << std::endl;
 
 	double mRes;
 	if(_Mscale == MFS_1300mG)
