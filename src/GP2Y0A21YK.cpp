@@ -13,7 +13,13 @@ GP2Y0A21YK::GP2Y0A21YK(mraa_result_t &response, int pin, double r) {
     	}
 	response = MRAA_SUCCESS;
 
+	const int count = 10;
 	lastDistance = 0;
+	for(int i=0;i < count;i++)
+	{
+		lastDistance += getDistanceData()/count;
+	}
+	
 	_r = r;
 }
 
@@ -22,11 +28,18 @@ GP2Y0A21YK::~GP2Y0A21YK() {
 	delete a;
 }
 
-double GP2Y0A21YK::getDistance() {
+double GP2Y0A21YK::getDistanceData() {
 	float vol = a->readFloat();
 	double distance = voltage2distance(vol*5)/100;
 
-	lastDistance = _r*distance + (1-_r)*lastDistance;
+	return distance;
+}
+
+
+double GP2Y0A21YK::getDistance() {
+	
+
+	lastDistance = _r*getDistanceData() + (1-_r)*lastDistance;
 
 	return lastDistance;
 }

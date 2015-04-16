@@ -50,7 +50,8 @@ static const char* crawlercontrollerpwm2_spec[] =
     "conf.default.frontDistance", "0.5",
     "conf.default.backDistance", "0.1",
     "conf.default.filter", "0.05",
-    "conf.default.rotOffset", "-1.1",
+    "conf.default.rotOffset", "0.5",
+    "conf.default.rotCorVal", "15",
     // Widget
     "conf.__widget__.motor0pwm0", "text",
     "conf.__widget__.motor0pwm1", "text",
@@ -76,6 +77,7 @@ static const char* crawlercontrollerpwm2_spec[] =
     "conf.__widget__.backDistance", "text",
     "conf.__widget__.filter", "text",
     "conf.__widget__.rotOffset", "text",
+    "conf.__widget__.rotCorVal", "text",
 
 
     "conf.__constraints__.gyroSensor", "(0,1)",
@@ -191,9 +193,12 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onInitialize()
   bindParameter("frontDistance", m_frontDistance, "0.5");
   bindParameter("backDistance", m_backDistance, "0.1");
   bindParameter("filter", m_filter, "0.05");
-  bindParameter("rotOffset", m_rotOffset, "-1.1");
+  bindParameter("rotOffset", m_rotOffset, "0.5");
+  bindParameter("rotCorVal", m_rotCorVal, "15");
 
-  
+  _smf = new i2c_smf();
+
+  last_rz = 0;
   // </rtc-template>
   return RTC::RTC_OK;
 }
@@ -249,8 +254,12 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onShutdown(RTC::UniqueId ec_id)
 	}
 	if(_i2c)
 	{
+		_smf->sem_lock();
 		delete _i2c;
+		_smf->sem_unlock();
 	}
+
+	delete _smf;
   return RTC::RTC_OK;
 }
 
@@ -260,7 +269,9 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onActivated(RTC::UniqueId ec_id)
 	mraa_result_t response;
 	if(_i2c == NULL)
 	{
+		_smf->sem_lock();
 		_i2c = new mraa::I2c(m_I2C_channel);
+		_smf->sem_unlock();
 	}
 	if(controller0 == NULL)
 	{
@@ -282,7 +293,7 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onActivated(RTC::UniqueId ec_id)
 	{
 		if(gyroSensor == NULL)
 		{
-			gyroSensor = new L3GD20(_i2c, m_gyroSensor_addr);
+			gyroSensor = new L3GD20(_i2c, _smf, m_gyroSensor_addr);
 			if(response != MRAA_SUCCESS)
 			{
 				return RTC::RTC_ERROR;
@@ -338,13 +349,15 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onActivated(RTC::UniqueId ec_id)
 	{
 		if(accSensor == NULL)
 		{
-			accSensor = new LSM303DLHC(_i2c, m_Acc_addr, m_Magn_addr);
+			accSensor = new LSM303DLHC(_i2c, _smf, m_Acc_addr, m_Magn_addr);
 			
 		}
 	}
 
 	last_bias0 = 0;
 	last_bias1 = 0;
+
+	lv_count = 0;
 
 	//crawlerVol0 = 1;
 	//crawlerVol1 = 1;
@@ -358,6 +371,8 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onDeactivated(RTC::UniqueId ec_id)
 {
 	controller0->setValue(0);
 	controller1->setValue(0);
+	crawlerVol0 = 0;
+	crawlerVol1 = 0;
   return RTC::RTC_OK;
 }
 
@@ -376,6 +391,37 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onExecute(RTC::UniqueId ec_id)
 		m_in1In.read();
 		crawlerVol1 = m_in1.data;
 		
+	}
+	
+	const double lv = 0.01;
+	
+	if(sqrt(crawlerVol0*crawlerVol0) < lv && sqrt(crawlerVol1*crawlerVol1) < lv)
+	{
+		controller0->setValue(0);
+		controller1->setValue(0);
+
+		lv_count += 1;
+		if(lv_count%20 == 0)
+		{
+			double rn0,rn1,rn2,rn3;
+			writeRangeSensor(rn0,rn1,rn2,rn3);
+			
+			double avx,avy,avz;
+
+			writeGyroSensor(avx,avy,avz);
+
+			double ax,ay,az;
+
+			double mx,my,mz;
+
+			double rx,ry,rz;
+			double temp;
+
+			writeLSM303DLHC(0,ax,ay,az,mx,my,mz,rx,ry,rz,temp);
+		}
+
+
+		return RTC::RTC_OK;
 	}
 
 	double input_crawlerVol0 = crawlerVol0;
@@ -430,19 +476,17 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onExecute(RTC::UniqueId ec_id)
 			dir = C_Back_Right;
 		}
 
-		double bias0 = rangeSensor0->getDistance();
-		double bias1 = rangeSensor1->getDistance();
-		double bias2 = rangeSensor2->getDistance();
-		double bias3 = rangeSensor3->getDistance();
+		
 
-		m_range0.data = bias0;
-		m_range0Out.write();
-		m_range1.data = bias1;
-		m_range1Out.write();
-		m_range2.data = bias2;
-		m_range2Out.write();
-		m_range3.data = bias3;
-		m_range3Out.write();
+
+		double bias0,bias1,bias2,bias3;
+
+		writeRangeSensor(bias0,bias1,bias2,bias3);
+
+		//std::cout << "loop" << std::endl;
+		//std::cout << bias0 << "\t" << bias1 << std::endl;
+
+		
 
 		
 
@@ -459,8 +503,7 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onExecute(RTC::UniqueId ec_id)
 		bias0 = (m_frontDistance-bias0)/(m_frontDistance-m_backDistance);
 		bias1 = (m_frontDistance-bias1)/(m_frontDistance-m_backDistance);
 
-		//std::cout << "loop" << std::endl;
-		//std::cout << bias0 << "\t" << bias1 << std::endl;
+		
 
 		if(last_bias0 > bias0)
 		{
@@ -512,6 +555,8 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onExecute(RTC::UniqueId ec_id)
 
 	//std::cout << input_crawlerVol0 << "\t" << input_crawlerVol1 << std::endl;
 
+	//std::cout << input_crawlerVol0 << "\t" << input_crawlerVol1 << std::endl;
+
 	
 	/*m_count += 1;
 	if(m_count%50 == 0 || m_count%50 == 1 || m_count%50 == 2 || m_count%50 == 3 || m_count%50 == 4)
@@ -525,12 +570,85 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onExecute(RTC::UniqueId ec_id)
 		controller1->setValue(input_crawlerVol1);
 	}*/
 
+	double avx,avy,avz;
+
+	writeGyroSensor(avx,avy,avz);
+
+
+	
+	double ax,ay,az;
+
+	double mx,my,mz;
+
+	double rx,ry,rz;
+	double temp;
+
+	writeLSM303DLHC(trans_speed,ax,ay,az,mx,my,mz,rx,ry,rz,temp);
+
+	double drz = 0;
+	drz = rz - last_rz;
+	last_rz = rz;
+	
+	const double pm = 0.01;
+	
+	double dfv = input_crawlerVol0 - input_crawlerVol1;
+	if(sqrt(dfv*dfv) < pm)
+	{
+		input_crawlerVol0 += drz*m_rotCorVal;
+		input_crawlerVol1 -= drz*m_rotCorVal;
+	}
+	
 	controller0->setValue(input_crawlerVol0);
 	controller1->setValue(input_crawlerVol1);
+	
+  return RTC::RTC_OK;
+}
 
+void crawlercontrollerpwm2::writeRangeSensor(double &rn0, double &rn1, double &rn2, double &rn3)
+{
+	rn0 = 0;
+	rn1 = 0;
+	rn2 = 0;
+	rn3 = 0;
+
+	if(m_rangeSensor0 == 1 && rangeSensor0)
+	{
+		rn0 = rangeSensor0->getDistance();
+		m_range0.data = rn0;
+		m_range0Out.write();
+	}
+	
+	if(m_rangeSensor1 == 1 && rangeSensor1)
+	{
+		rn1 = rangeSensor1->getDistance();
+		m_range1.data = rn1;
+		m_range1Out.write();
+	}
+
+	if(m_rangeSensor2 == 1 && rangeSensor2)
+	{
+		rn2 = rangeSensor2->getDistance();
+		m_range2.data = rn2;
+		m_range2Out.write();
+	}
+
+	if(m_rangeSensor3 == 1 && rangeSensor3)
+	{
+		rn3 = rangeSensor3->getDistance();
+		m_range3.data = rn3;
+		m_range3Out.write();
+	}
+
+}
+
+void crawlercontrollerpwm2::writeGyroSensor(double &avx, double &avy, double &avz)
+{
+	avx = 0;
+	avy = 0;
+	avz = 0;
 	if(m_gyroSensor == 1 && gyroSensor)
 	{
-		double avx,avy,avz;
+		
 		gyroSensor->getGyro(avx,avy,avz);
 		m_gyro.data.avx = avx;
 		m_gyro.data.avy = avy;
@@ -538,9 +656,29 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onExecute(RTC::UniqueId ec_id)
 		
 		m_gyroOut.write();
 	}
+}
+
+void crawlercontrollerpwm2::writeLSM303DLHC(double trans_speed, double &ax, double &ay, double &az, double &mx, double &my, double &mz, double &rx, double &ry, double &rz, double &temp)
+{
+
+	ax = 0;
+	ay = 0;
+	az = 0;
+
+	mx = 0;
+	my = 0;
+	mz = 0;
+
+	rx = 0;
+	ry = 0;
+	rz = 0;
+
+	temp = 0;
+
+
 	if(m_LSM303DLHC == 1 && accSensor)
 	{
-		double ax,ay,az;
+		
 		accSensor->getAcc(ax,ay,az);
 		m_acc.data.ax = ax;
 		m_acc.data.ay = ay;
@@ -549,7 +687,7 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onExecute(RTC::UniqueId ec_id)
 
 		
 
-		double mx,my,mz;
+		
 		accSensor->getMagn(mx,my,mz);
 		m_magn.data.length(3);
 		m_magn.data[0] = mx;
@@ -562,9 +700,9 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onExecute(RTC::UniqueId ec_id)
 
 		
 
-		double rx,ry,rz;
+		
 		accSensor->getOrientation(rx,ry,rz);
-		const double r = 0.03;
+		const double r = 0.01;
 		last_posx += trans_speed*r*sin(-(rz-m_rotOffset));
 		last_posy += trans_speed*r*cos(-(rz-m_rotOffset));
 		m_pos.data.position.x = last_posx;
@@ -574,11 +712,8 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onExecute(RTC::UniqueId ec_id)
 
 		
 	}
-
-	
-	
-  return RTC::RTC_OK;
 }
+
 
 /*
 RTC::ReturnCode_t crawlercontrollerpwm2::onAborting(RTC::UniqueId ec_id)

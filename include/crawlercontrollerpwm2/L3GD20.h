@@ -13,7 +13,7 @@
 class L3GD20
 {
 public:
-	L3GD20(mraa::I2c *i2c, uint8_t addr = 0x6a, double r = 0.2);
+	L3GD20(mraa::I2c *i2c, i2c_smf *smf, uint8_t addr = 0x6a, double r = 0.2);
 	~L3GD20();
 	
 	void reset(void);

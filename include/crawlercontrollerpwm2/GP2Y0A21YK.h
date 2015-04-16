@@ -13,6 +13,7 @@ public:
 	GP2Y0A21YK(mraa_result_t &response, int pin = 0, double r = 0.2);
 	~GP2Y0A21YK();
 	double getDistance();
+	double getDistanceData();
 	double voltage2distance(double dVolt);
 	
 private:

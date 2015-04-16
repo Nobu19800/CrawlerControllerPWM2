@@ -8,7 +8,7 @@
 #include <iostream>
 #include "L3GD20.h"
 
-L3GD20::L3GD20(mraa::I2c *i2c, uint8_t addr, double r) {
+L3GD20::L3GD20(mraa::I2c *i2c, i2c_smf *smf, uint8_t addr, double r) {
 	_i2c = i2c;
 	
 	
@@ -19,13 +19,13 @@ L3GD20::L3GD20(mraa::I2c *i2c, uint8_t addr, double r) {
 	_addr = addr;
 	
 
-	_smf = new i2c_smf();
+	_smf = smf;
 
 	reset();
 }
 
 L3GD20::~L3GD20() {
-	delete _smf;
+	//delete _smf;
 }
 
 

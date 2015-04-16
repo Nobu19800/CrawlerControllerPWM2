@@ -58,6 +58,10 @@ class crawlercontrollerpwm2
    * @brief destructor
    */
   ~crawlercontrollerpwm2();
+  void writeRangeSensor(double &rn0, double &rn1, double &rn2, double &rn3);
+  void writeGyroSensor(double &avx, double &avy, double &avz);
+  void writeLSM303DLHC(double trans_speed, double &ax, double &ay, double &az, double &mx, double &my, double &mz, double &rx, double &ry, double &rz, double &temp);
+  
 
   // <rtc-template block="public_attribute">
   
@@ -277,6 +281,7 @@ class crawlercontrollerpwm2
   double m_filter;
   
   double m_rotOffset;
+  double m_rotCorVal;
   // </rtc-template>
 
   // DataInPort declaration
@@ -355,6 +360,12 @@ class crawlercontrollerpwm2
 
 	double last_posx;
 	double last_posy;
+
+	i2c_smf *_smf;
+
+	double last_rz;
+
+	int lv_count;
 
 	//int m_count;
 	

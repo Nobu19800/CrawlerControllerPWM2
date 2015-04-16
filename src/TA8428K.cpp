@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "TA8428K.h"
 
@@ -39,7 +40,7 @@ TA8428K::~TA8428K() {
 
 void TA8428K::setValue(double vol) {
 
-
+	//std::cout << vol << std::endl;
 	if(vol < 0)
 	{
 		pwm0->write(-vol);

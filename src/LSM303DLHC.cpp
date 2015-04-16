@@ -8,7 +8,7 @@
 #include <iostream>
 #include "LSM303DLHC.h"
 
-LSM303DLHC::LSM303DLHC(mraa::I2c *i2c, uint8_t Accaddr, uint8_t Magnaddr, double ar, double mr, int mx_offset, int my_offset, int mz_offset) {
+LSM303DLHC::LSM303DLHC(mraa::I2c *i2c, i2c_smf *smf, uint8_t Accaddr, uint8_t Magnaddr, double ar, double mr, int mx_offset, int my_offset, int mz_offset) {
 	_i2c = i2c;
 	
 	
@@ -19,7 +19,8 @@ LSM303DLHC::LSM303DLHC(mraa::I2c *i2c, uint8_t Accaddr, uint8_t Magnaddr, double
 	_Accaddr = Accaddr;
 	_Magnaddr = Magnaddr;
 
-	_smf = new i2c_smf();
+	//_smf = new i2c_smf();
+	_smf = smf;
 
 	_mx_offset = mx_offset;
 	_my_offset = my_offset;
@@ -29,7 +30,7 @@ LSM303DLHC::LSM303DLHC(mraa::I2c *i2c, uint8_t Accaddr, uint8_t Magnaddr, double
 }
 
 LSM303DLHC::~LSM303DLHC() {
-	delete _smf;
+	//delete _smf;
 }
 
 
