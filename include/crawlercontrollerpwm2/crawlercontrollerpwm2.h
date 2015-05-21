@@ -91,7 +91,7 @@ class crawlercontrollerpwm2
    * 
    * 
    */
-  // virtual RTC::ReturnCode_t onFinalize();
+   virtual RTC::ReturnCode_t onFinalize();
 
   /***
    *

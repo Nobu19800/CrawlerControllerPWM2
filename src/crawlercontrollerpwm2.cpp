@@ -203,24 +203,11 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onInitialize()
   return RTC::RTC_OK;
 }
 
-/*
+
 RTC::ReturnCode_t crawlercontrollerpwm2::onFinalize()
 {
-  return RTC::RTC_OK;
-}
-*/
 
-/*
-RTC::ReturnCode_t crawlercontrollerpwm2::onStartup(RTC::UniqueId ec_id)
-{
-  return RTC::RTC_OK;
-}
-*/
-
-
-RTC::ReturnCode_t crawlercontrollerpwm2::onShutdown(RTC::UniqueId ec_id)
-{
-	if(controller0)
+  if(controller0)
 	{
 		delete controller0;
 	}
@@ -260,6 +247,21 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onShutdown(RTC::UniqueId ec_id)
 	}
 
 	delete _smf;
+  return RTC::RTC_OK;
+}
+
+
+/*
+RTC::ReturnCode_t crawlercontrollerpwm2::onStartup(RTC::UniqueId ec_id)
+{
+  return RTC::RTC_OK;
+}
+*/
+
+
+RTC::ReturnCode_t crawlercontrollerpwm2::onShutdown(RTC::UniqueId ec_id)
+{
+	
   return RTC::RTC_OK;
 }
 
