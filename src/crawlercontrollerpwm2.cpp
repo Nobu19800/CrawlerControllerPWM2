@@ -1,21 +1,21 @@
 // -*- C++ -*-
 /*!
- * @file  crawlercontrollerpwm2.cpp
+ * @file  CrawlerControllerPWM2.cpp
  * @brief Crawler Controller Component
  * @date $Date$
  *
  * $Id$
  */
 #include "math.h"
-#include "crawlercontrollerpwm2.h"
+#include "CrawlerControllerPWM2.h"
 
 
 // Module specification
 // <rtc-template block="module_spec">
-static const char* crawlercontrollerpwm2_spec[] =
+static const char* CrawlerControllerPWM2_spec[] =
   {
-    "implementation_id", "crawlercontrollerpwm2",
-    "type_name",         "crawlercontrollerpwm2",
+    "implementation_id", "CrawlerControllerPWM2",
+    "type_name",         "CrawlerControllerPWM2",
     "description",       "Crawler Controller Component",
     "version",           "1.0.0",
     "vendor",            "Miyamoto Nobuhiko",
@@ -96,7 +96,7 @@ static const char* crawlercontrollerpwm2_spec[] =
  * @brief constructor
  * @param manager Maneger Object
  */
-crawlercontrollerpwm2::crawlercontrollerpwm2(RTC::Manager* manager)
+CrawlerControllerPWM2::CrawlerControllerPWM2(RTC::Manager* manager)
     // <rtc-template block="initializer">
   : RTC::DataFlowComponentBase(manager),
     m_in0In("in0", m_in0),
@@ -132,13 +132,13 @@ crawlercontrollerpwm2::crawlercontrollerpwm2(RTC::Manager* manager)
 /*!
  * @brief destructor
  */
-crawlercontrollerpwm2::~crawlercontrollerpwm2()
+CrawlerControllerPWM2::~CrawlerControllerPWM2()
 {
 }
 
 
 
-RTC::ReturnCode_t crawlercontrollerpwm2::onInitialize()
+RTC::ReturnCode_t CrawlerControllerPWM2::onInitialize()
 {
   // Registration: InPort/OutPort/Service
   // <rtc-template block="registration">
@@ -204,7 +204,7 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onInitialize()
 }
 
 
-RTC::ReturnCode_t crawlercontrollerpwm2::onFinalize()
+RTC::ReturnCode_t CrawlerControllerPWM2::onFinalize()
 {
 
   if(controller0)
@@ -252,21 +252,21 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onFinalize()
 
 
 /*
-RTC::ReturnCode_t crawlercontrollerpwm2::onStartup(RTC::UniqueId ec_id)
+RTC::ReturnCode_t CrawlerControllerPWM2::onStartup(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 */
 
 
-RTC::ReturnCode_t crawlercontrollerpwm2::onShutdown(RTC::UniqueId ec_id)
+RTC::ReturnCode_t CrawlerControllerPWM2::onShutdown(RTC::UniqueId ec_id)
 {
 	
   return RTC::RTC_OK;
 }
 
 
-RTC::ReturnCode_t crawlercontrollerpwm2::onActivated(RTC::UniqueId ec_id)
+RTC::ReturnCode_t CrawlerControllerPWM2::onActivated(RTC::UniqueId ec_id)
 {
 	mraa_result_t response;
 	if(_i2c == NULL)
@@ -369,7 +369,7 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onActivated(RTC::UniqueId ec_id)
 }
 
 
-RTC::ReturnCode_t crawlercontrollerpwm2::onDeactivated(RTC::UniqueId ec_id)
+RTC::ReturnCode_t CrawlerControllerPWM2::onDeactivated(RTC::UniqueId ec_id)
 {
 	controller0->setValue(0);
 	controller1->setValue(0);
@@ -379,7 +379,7 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onDeactivated(RTC::UniqueId ec_id)
 }
 
 
-RTC::ReturnCode_t crawlercontrollerpwm2::onExecute(RTC::UniqueId ec_id)
+RTC::ReturnCode_t CrawlerControllerPWM2::onExecute(RTC::UniqueId ec_id)
 {
 
 
@@ -606,7 +606,7 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onExecute(RTC::UniqueId ec_id)
   return RTC::RTC_OK;
 }
 
-void crawlercontrollerpwm2::writeRangeSensor(double &rn0, double &rn1, double &rn2, double &rn3)
+void CrawlerControllerPWM2::writeRangeSensor(double &rn0, double &rn1, double &rn2, double &rn3)
 {
 	rn0 = 0;
 	rn1 = 0;
@@ -643,7 +643,7 @@ void crawlercontrollerpwm2::writeRangeSensor(double &rn0, double &rn1, double &r
 
 }
 
-void crawlercontrollerpwm2::writeGyroSensor(double &avx, double &avy, double &avz)
+void CrawlerControllerPWM2::writeGyroSensor(double &avx, double &avy, double &avz)
 {
 	avx = 0;
 	avy = 0;
@@ -660,7 +660,7 @@ void crawlercontrollerpwm2::writeGyroSensor(double &avx, double &avy, double &av
 	}
 }
 
-void crawlercontrollerpwm2::writeLSM303DLHC(double trans_speed, double &ax, double &ay, double &az, double &mx, double &my, double &mz, double &rx, double &ry, double &rz, double &temp)
+void CrawlerControllerPWM2::writeLSM303DLHC(double trans_speed, double &ax, double &ay, double &az, double &mx, double &my, double &mz, double &rx, double &ry, double &rz, double &temp)
 {
 
 	ax = 0;
@@ -718,35 +718,35 @@ void crawlercontrollerpwm2::writeLSM303DLHC(double trans_speed, double &ax, doub
 
 
 /*
-RTC::ReturnCode_t crawlercontrollerpwm2::onAborting(RTC::UniqueId ec_id)
+RTC::ReturnCode_t CrawlerControllerPWM2::onAborting(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 */
 
 /*
-RTC::ReturnCode_t crawlercontrollerpwm2::onError(RTC::UniqueId ec_id)
+RTC::ReturnCode_t CrawlerControllerPWM2::onError(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 */
 
 /*
-RTC::ReturnCode_t crawlercontrollerpwm2::onReset(RTC::UniqueId ec_id)
+RTC::ReturnCode_t CrawlerControllerPWM2::onReset(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 */
 
 /*
-RTC::ReturnCode_t crawlercontrollerpwm2::onStateUpdate(RTC::UniqueId ec_id)
+RTC::ReturnCode_t CrawlerControllerPWM2::onStateUpdate(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 */
 
 /*
-RTC::ReturnCode_t crawlercontrollerpwm2::onRateChanged(RTC::UniqueId ec_id)
+RTC::ReturnCode_t CrawlerControllerPWM2::onRateChanged(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
@@ -757,12 +757,12 @@ RTC::ReturnCode_t crawlercontrollerpwm2::onRateChanged(RTC::UniqueId ec_id)
 extern "C"
 {
  
-  void crawlercontrollerpwm2Init(RTC::Manager* manager)
+  void CrawlerControllerPWM2Init(RTC::Manager* manager)
   {
-    coil::Properties profile(crawlercontrollerpwm2_spec);
+    coil::Properties profile(CrawlerControllerPWM2_spec);
     manager->registerFactory(profile,
-                             RTC::Create<crawlercontrollerpwm2>,
-                             RTC::Delete<crawlercontrollerpwm2>);
+                             RTC::Create<CrawlerControllerPWM2>,
+                             RTC::Delete<CrawlerControllerPWM2>);
   }
   
 };

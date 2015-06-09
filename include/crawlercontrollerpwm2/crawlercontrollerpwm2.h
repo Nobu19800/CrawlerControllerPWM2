@@ -1,14 +1,14 @@
 // -*- C++ -*-
 /*!
- * @file  crawlercontrollerpwm2.h
+ * @file  CrawlerControllerPWM2.h
  * @brief Crawler Controller Component
  * @date  $Date$
  *
  * $Id$
  */
 
-#ifndef CRAWLERCONTROLLERPWM2_H
-#define CRAWLERCONTROLLERPWM2_H
+#ifndef CrawlerControllerPWM2_H
+#define CrawlerControllerPWM2_H
 
 #include <rtm/Manager.h>
 #include <rtm/DataFlowComponentBase.h>
@@ -40,11 +40,11 @@ enum Crawler_Direction { C_Forword, C_Forword_Left, C_Forword_Right, C_Left, C_R
 using namespace RTC;
 
 /*!
- * @class crawlercontrollerpwm2
+ * @class CrawlerControllerPWM2
  * @brief Crawler Controller Component
  *
  */
-class crawlercontrollerpwm2
+class CrawlerControllerPWM2
   : public RTC::DataFlowComponentBase
 {
  public:
@@ -52,12 +52,12 @@ class crawlercontrollerpwm2
    * @brief constructor
    * @param manager Maneger Object
    */
-  crawlercontrollerpwm2(RTC::Manager* manager);
+  CrawlerControllerPWM2(RTC::Manager* manager);
 
   /*!
    * @brief destructor
    */
-  ~crawlercontrollerpwm2();
+  ~CrawlerControllerPWM2();
   void writeRangeSensor(double &rn0, double &rn1, double &rn2, double &rn3);
   void writeGyroSensor(double &avx, double &avy, double &avz);
   void writeLSM303DLHC(double trans_speed, double &ax, double &ay, double &az, double &mx, double &my, double &mz, double &rx, double &ry, double &rz, double &temp);
@@ -382,7 +382,7 @@ class crawlercontrollerpwm2
 
 extern "C"
 {
-  DLL_EXPORT void crawlercontrollerpwm2Init(RTC::Manager* manager);
+  DLL_EXPORT void CrawlerControllerPWM2Init(RTC::Manager* manager);
 };
 
-#endif // CRAWLERCONTROLLERPWM2_H
+#endif // CrawlerControllerPWM2_H

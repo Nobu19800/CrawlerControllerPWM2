@@ -1,4 +1,4 @@
-crawlercontrollerpwm2 - 日本語
+CrawlerControllerPWM2 - 日本語
 =======================
 
 
@@ -13,9 +13,9 @@ crawlercontrollerpwm2 - 日本語
 条件
 ====
 
-crawlercontrollerpwm2はOpenRTM-aist 1.0.0以上のC++版が必要です。
+CrawlerControllerPWM2はOpenRTM-aist 1.0.0以上のC++版が必要です。
 
-crawlercontrollerpwm2は CMake_ を使います。CMake 2.8以上が必要です。
+CrawlerControllerPWM2は CMake_ を使います。CMake 2.8以上が必要です。
 
 .. _CMAke:
    http://www.cmake.org
@@ -36,8 +36,8 @@ Windowsのユーザはインストーラパッケージを使用してコンポ�
 - 環境変数の変更を適用するため、コンポーネントを使用する前にコンピューターを
   再起動する必要があるかもしれません。
 
-crawlercontrollerpwm2は ``crawlercontrollerpwm2Comp`` の実行をダブルクリックして実行することが
-できます。あるいは、 ``crawlercontrollerpwm2`` を初期化関数の ``crawlercontrollerpwm2Init`` を利用して、
+CrawlerControllerPWM2は ``CrawlerControllerPWM2Comp`` の実行をダブルクリックして実行することが
+できます。あるいは、 ``CrawlerControllerPWM2`` を初期化関数の ``CrawlerControllerPWM2Init`` を利用して、
 マネージャにロードすることができます。
 
 ソースから
@@ -47,11 +47,11 @@ crawlercontrollerpwm2は ``crawlercontrollerpwm2Comp`` の実行をダブルク�
 
 - ソースをダウンロードして解凍してください::
 
-    tar -xvzf crawlercontrollerpwm2-1.0.0.tar.gz
+    tar -xvzf CrawlerControllerPWM2-1.0.0.tar.gz
 
 - 解凍されたフォルダに入ってください::
 
-    cd crawlercontrollerpwm2-1.0.0
+    cd CrawlerControllerPWM2-1.0.0
 
 - ``build`` フォルダを作ってください::
 
@@ -82,9 +82,9 @@ crawlercontrollerpwm2は ``crawlercontrollerpwm2Comp`` の実行をダブルク�
 ここまでで、コンポーネントが使えるようになりました。コンフィグレーションは次のセクションを
 参照してください。
 
-crawlercontrollerpwm2は ``crawlercontrollerpwm2Comp`` を実行（ ``${prefix}/components/bin`` に
+CrawlerControllerPWM2は ``CrawlerControllerPWM2Comp`` を実行（ ``${prefix}/components/bin`` に
 インストールされます）することでスタンドアローンモードで実行することができます。
-あるいは、 ``libcrawlercontrollerpwm2.so`` を初期化関数の ``crawlercontrollerpwm2Init`` を利用して、
+あるいは、 ``libCrawlerControllerPWM2.so`` を初期化関数の ``CrawlerControllerPWM2Init`` を利用して、
 マネージャにロードすることができます。このライブラリは ``${prefix}/components/lib`` 
 または ``${prefix}/components/lib64`` にインストールされます。
 
@@ -119,7 +119,7 @@ in1             InPort      RTC::TimedDouble
 例
 ==
 
-例のrtc.confファイルは ``${prefix}/components/share/crawlercontrollerpwm2/examples/conf/``
+例のrtc.confファイルは ``${prefix}/components/share/CrawlerControllerPWM2/examples/conf/``
 フォルダにインストールされています。
 
 Changelog

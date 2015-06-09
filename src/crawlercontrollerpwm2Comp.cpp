@@ -1,6 +1,6 @@
 // -*- C++ -*-
 /*!
- * @file crawlercontrollerpwm2Comp.cpp
+ * @file CrawlerControllerPWM2Comp.cpp
  * @brief Standalone component
  * @date $Date$
  *
@@ -11,16 +11,16 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
-#include "crawlercontrollerpwm2.h"
+#include "CrawlerControllerPWM2.h"
 
 
 void MyModuleInit(RTC::Manager* manager)
 {
-  crawlercontrollerpwm2Init(manager);
+  CrawlerControllerPWM2Init(manager);
   RTC::RtcBase* comp;
 
   // Create a component
-  comp = manager->createComponent("crawlercontrollerpwm2");
+  comp = manager->createComponent("CrawlerControllerPWM2");
 
   if (comp==NULL)
   {

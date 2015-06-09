@@ -1,4 +1,4 @@
-crawlercontrollerpwm2Name - English
+CrawlerControllerPWM2Name - English
 ========================
 
 .. toctree::
@@ -19,7 +19,7 @@ For a full list of classes and functions, see the `API documentation`_.
 Requirements
 ============
 
-crawlercontrollerpwm2 uses the `CMake build system`. You will need at least version
+CrawlerControllerPWM2 uses the `CMake build system`. You will need at least version
 2.8 to be able to build the component.
 
 .. _`CMAke build system`:
@@ -43,24 +43,24 @@ recommended method of installation in Windows.
   to take effect before using the component.
 
 The component can be launched by double-clicking the
-``crawlercontrollerpwm2Comp`` executable. The ``crawlercontrollerpwm2`` library
+``CrawlerControllerPWM2Comp`` executable. The ``CrawlerControllerPWM2`` library
 is available for loading into a manager, using the initialisation function
-``crawlercontrollerpwm2Init``.
+``CrawlerControllerPWM2Init``.
 
 From source
 -----------
 
-Follow these steps to install crawlercontrollerpwm2 from source in any operating
+Follow these steps to install CrawlerControllerPWM2 from source in any operating
 system:
 
 - Download the source, either from the repository or a source archive,
   and extract it somewhere::
 
-    tar -xvzf crawlercontrollerpwm2-1.0.0.tar.gz
+    tar -xvzf CrawlerControllerPWM2-1.0.0.tar.gz
 
 - Change to the directory containing the extracted source::
 
-    cd crawlercontrollerpwm2-1.0.0
+    cd CrawlerControllerPWM2-1.0.0
 
 - Create a directory called ``build``::
 
@@ -91,10 +91,10 @@ system:
 The component is now ready for use. See the next section for instructions on
 configuring the component.
 
-crawlercontrollerpwm2 can be launched in stand-alone mode by executing the
-``crawlercontrollerpwm2Comp`` executable (installed into ``${prefix}/components/bin``).
-Alternatively, ``libcrawlercontrollerpwm2.so`` can be loaded into a manager, using the
-initialisation function ``crawlercontrollerpwm2Init``. This shared object can be found in
+CrawlerControllerPWM2 can be launched in stand-alone mode by executing the
+``CrawlerControllerPWM2Comp`` executable (installed into ``${prefix}/components/bin``).
+Alternatively, ``libCrawlerControllerPWM2.so`` can be loaded into a manager, using the
+initialisation function ``CrawlerControllerPWM2Init``. This shared object can be found in
 ``${prefix}/components/lib`` or ``${prefix}/components/lib64``.
 
 
@@ -128,7 +128,7 @@ Examples
 ========
 
 An example configuration file is provided in the
-``${prefix}/components/share/crawlercontrollerpwm2/examples/conf/`` directory.
+``${prefix}/components/share/CrawlerControllerPWM2/examples/conf/`` directory.
 
 Changelog
 =========

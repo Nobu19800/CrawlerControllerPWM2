@@ -1,4 +1,5 @@
-set(hdrs crawlercontrollerpwm2.h
+set(hdrs CrawlerControllerPWM2.h
+    PARENT_SCOPE
     )
 
 install(FILES ${hdrs} DESTINATION ${INC_INSTALL_DIR}/${PROJECT_NAME_LOWER}
