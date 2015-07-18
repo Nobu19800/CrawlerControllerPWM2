@@ -19,7 +19,7 @@ static const char* CrawlerControllerPWM2_spec[] =
     "description",       "Crawler Controller Component",
     "version",           "1.0.0",
     "vendor",            "Miyamoto Nobuhiko",
-    "category",          "TEST",
+    "category",          "Crawler",
     "activity_type",     "PERIODIC",
     "kind",              "DataFlowComponent",
     "max_instance",      "1",
