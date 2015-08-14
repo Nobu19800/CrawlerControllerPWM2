@@ -20,7 +20,7 @@
 #include <rtm/idl/InterfaceDataTypesSkel.h>
 
 #include "TA8428K.h"
-#include "L3GD20.h"
+#include "L3GD20_I2C.h"
 #include "GP2Y0A21YK.h"
 #include "LSM303DLHC.h"
 
@@ -261,7 +261,7 @@ class CrawlerControllerPWM2
   int m_motor1pwm1;
 
   int m_gyroSensor;
-  int m_gyroSensor_addr;
+  std::string m_gyroSensor_addr;
   int m_rangeSensor0;
   int m_rangeSensor1;
   int m_rangeSensor2;
@@ -271,8 +271,8 @@ class CrawlerControllerPWM2
   int m_rangeSensor2_Pin;
   int m_rangeSensor3_Pin;
   int m_LSM303DLHC;
-  int m_Acc_addr;
-  int m_Magn_addr;
+  //int m_Acc_addr;
+  //int m_Magn_addr;
   int m_I2C_channel;
 
   double m_bias;
@@ -344,7 +344,7 @@ class CrawlerControllerPWM2
 	TA8428K *controller0;
 	TA8428K *controller1;
 
-	L3GD20 *gyroSensor;
+	L3GD20_I2C *gyroSensor;
 	GP2Y0A21YK *rangeSensor0;
 	GP2Y0A21YK *rangeSensor1;
 	GP2Y0A21YK *rangeSensor2;

@@ -1,4 +1,4 @@
-set(comp_srcs CrawlerControllerPWM2.cpp TA8428K.cpp L3GD20.cpp GP2Y0A21YK.cpp LSM303DLHC.cpp i2c_smf.cpp )
+set(comp_srcs CrawlerControllerPWM2.cpp TA8428K.cpp L3GD20.cpp L3GD20_I2C.cpp GP2Y0A21YK.cpp LSM303DLHC.cpp i2c_smf.cpp )
 set(standalone_srcs CrawlerControllerPWM2Comp.cpp)
 
 if (DEFINED OPENRTM_INCLUDE_DIRS)

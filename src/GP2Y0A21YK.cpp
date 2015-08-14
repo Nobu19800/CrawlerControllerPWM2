@@ -5,7 +5,7 @@
 #include "GP2Y0A21YK.h"
 
 GP2Y0A21YK::GP2Y0A21YK(mraa_result_t &response, int pin, double r) {
-	
+	m_pin = pin;
 	a = new mraa::Aio(pin);
 	if (a == NULL) {
         	response = MRAA_ERROR_UNSPECIFIED;
@@ -24,8 +24,10 @@ GP2Y0A21YK::GP2Y0A21YK(mraa_result_t &response, int pin, double r) {
 }
 
 GP2Y0A21YK::~GP2Y0A21YK() {
-	
-	delete a;
+	if(a)
+	{
+		delete a;
+	}
 }
 
 double GP2Y0A21YK::getDistanceData() {
@@ -35,6 +37,28 @@ double GP2Y0A21YK::getDistanceData() {
 	return distance;
 }
 
+
+mraa_result_t GP2Y0A21YK::setPinNum(int pin)
+{
+	if(pin != m_pin)
+	{
+		if(a)
+		{
+			delete a;
+		}
+		a = new mraa::Aio(pin);
+		if (a == NULL) {
+	        	return MRAA_ERROR_UNSPECIFIED;
+	    	}
+		m_pin = pin;
+	}
+	return MRAA_SUCCESS;
+}
+
+void GP2Y0A21YK::setCoefficient(double r)
+{
+	_r = r;
+}
 
 double GP2Y0A21YK::getDistance() {
 	

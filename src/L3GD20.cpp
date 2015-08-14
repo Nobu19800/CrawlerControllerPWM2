@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/time.h>
@@ -8,29 +9,62 @@
 #include <iostream>
 #include "L3GD20.h"
 
-L3GD20::L3GD20(mraa::I2c *i2c, i2c_smf *smf, uint8_t addr, double r) {
-	_i2c = i2c;
-	
-	
+#define L3GD20_WHO_ID  0xD4
+
+L3GD20::L3GD20(i2c_smf *smf, uint8_t addr, uint8_t scale, double r) {
+
 	_r = r;
 	
-	
+	_scale = scale;
 	
 	_addr = addr;
 	
 
 	_smf = smf;
 
-	reset();
 }
 
 L3GD20::~L3GD20() {
 	//delete _smf;
 }
 
+bool L3GD20::sensor_Exist() {
+	uint8_t Buf[2];
+	readByte(_addr,WHO_AM_I,1,Buf);
 
+	//std::cout << (int)Buf[0] << "\t" << (int)L3GD20_WHO_ID << std::endl;
+	if(Buf[0] != L3GD20_WHO_ID)return false;
+	
+	return true;
+}
+
+mraa_result_t L3GD20::setAddr(uint8_t addr)
+{
+	if(_addr != addr)
+	{
+		_addr = addr;
+		if(!sensor_Exist())return MRAA_ERROR_UNSPECIFIED;
+		reset();
+	}
+	return MRAA_SUCCESS;
+}
 
 void L3GD20::setScale(uint8_t scale)
+{
+	if(_scale != scale)
+	{
+		_scale = scale;
+		reset();
+	}
+}
+
+void L3GD20::setCoefficient(double r)
+{
+	_r = r;
+}
+
+
+void L3GD20::setRange(uint8_t scale)
 {
 	_scale = scale;
 	writeByte(_addr, CTRL_REG4, _scale);
@@ -51,7 +85,7 @@ void L3GD20::reset(void) {
 
 
 	
-	setScale(Range_250dps);
+	setRange(_scale);
 	
 
   	
@@ -74,6 +108,7 @@ void L3GD20::reset(void) {
 		lastX += avx/count;
 		lastY += avy/count;
 		lastZ += avz/count;
+		usleep(10000);
 	}
 
 
@@ -100,26 +135,37 @@ void L3GD20::getGyro(double &avx, double &avy, double &avz)
 
 
 void L3GD20::getGyroData(double &avx, double &avy, double &avz) {
-	//uint8_t Buf[6];
-
-	//readByte(_addr, OUT_X_L | (1 << 7), 6, Buf);
-
-	_smf->sem_lock();
 
 
-	_i2c->address(_addr);
 
 	
-	
+	uint8_t x_hi, x_lo, y_hi, y_lo, z_hi, z_lo;
 
-	short GyroRaw_x = _i2c->readReg(OUT_X_H);
-	GyroRaw_x = (GyroRaw_x << 8) | _i2c->readReg(OUT_X_L);
-	short GyroRaw_y = _i2c->readReg(OUT_Y_H);
-	GyroRaw_y = (GyroRaw_y << 8) | _i2c->readReg(OUT_Y_L);
-	short GyroRaw_z = _i2c->readReg(OUT_Z_H);
-	GyroRaw_z = (GyroRaw_z << 8) | _i2c->readReg(OUT_Z_L);
+	uint8_t Buf[2];
+	readByte(_addr,OUT_X_H,1,Buf);
+	x_hi = Buf[0];
 
-	_smf->sem_unlock();
+	readByte(_addr,OUT_X_L,1,Buf);
+	x_lo = Buf[0];
+
+	readByte(_addr,OUT_Y_H,1,Buf);
+	y_hi = Buf[0];
+
+	readByte(_addr,OUT_Y_L,1,Buf);
+	y_lo = Buf[0];
+
+	readByte(_addr,OUT_Z_H,1,Buf);
+	z_hi = Buf[0];
+
+	readByte(_addr,OUT_Z_L,1,Buf);
+	z_lo = Buf[0];
+
+	short GyroRaw_x = x_hi;
+	GyroRaw_x = (GyroRaw_x << 8) | x_lo;
+	short GyroRaw_y = y_hi;
+	GyroRaw_y = (GyroRaw_y << 8) | y_lo;
+	short GyroRaw_z = z_hi;
+	GyroRaw_z = (GyroRaw_z << 8) | z_lo;
 
 
 
@@ -127,11 +173,11 @@ void L3GD20::getGyroData(double &avx, double &avy, double &avz) {
 
 	double gRes;
 	if(_scale == Range_250dps)
-		gRes = 2*0.00875*3.141592/180;
+		gRes = 2*0.00875*M_PI/180;
 	else if(_scale == Range_500dps)
-		gRes = 2*0.0175*3.141592/180;
+		gRes = 2*0.0175*M_PI/180;
 	else
-		gRes = 2*0.07*3.141592/180;
+		gRes = 2*0.07*M_PI/180;
 
 	avx = (double)GyroRaw_x * gRes;
 	avy = (double)GyroRaw_y * gRes;
@@ -142,28 +188,12 @@ void L3GD20::getGyroData(double &avx, double &avy, double &avz) {
 }
 
 
+void L3GD20::readByte(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data)
+{
 
-void L3GD20::writeByte(uint8_t Address, uint8_t Register, uint8_t Data) {
-
-	_smf->sem_lock();
-	_i2c->address(Address);
-	
-	_i2c->writeReg(Register, Data);
-	
-	_smf->sem_unlock();
-
-  	
 }
 
-void L3GD20::readByte(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data) {
-	
-	_smf->sem_lock();
+void L3GD20::writeByte(uint8_t Address, uint8_t Register, uint8_t Data)
+{
 
-	_i2c->address(Address);
-	_i2c->writeByte(Register);
-
-	
-	_i2c->read(Data,Nbytes);
-	
-	_smf->sem_unlock();
 }

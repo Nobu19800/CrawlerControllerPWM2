@@ -13,20 +13,22 @@
 class L3GD20
 {
 public:
-	L3GD20(mraa::I2c *i2c, i2c_smf *smf, uint8_t addr = 0x6a, double r = 0.2);
-	~L3GD20();
-	
-	void reset(void);
-	void getGyroData(double &avx, double &avy, double &avz);
-	void getGyro(double &avx, double &avy, double &avz);
-	
+	L3GD20(i2c_smf *smf, uint8_t addr = 0x6a, uint8_t scale = 0, double r = 0.2);
+	virtual ~L3GD20();
+	virtual bool sensor_Exist();
+	virtual void reset(void);
+	virtual void getGyroData(double &avx, double &avy, double &avz);
+	virtual void getGyro(double &avx, double &avy, double &avz);
+	virtual mraa_result_t setAddr(uint8_t addr = 0x6a);
+	virtual void setScale(uint8_t scale = 0);
+	virtual void setCoefficient(double r = 0.2);
 
 	
 	
 	
 	
 
-	void setScale(uint8_t scale);
+	virtual void setRange(uint8_t scale);
 	
 	
 	
@@ -86,18 +88,17 @@ public:
 	enum Gscale {
 	  Range_250dps = 0,
 	  Range_500dps,
-	  Range_2000dp
+	  Range_2000dps
 	};
-private:
+protected:
 	
 	//int _i2channel;
 
-	void readByte(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data);
-	void writeByte(uint8_t Address, uint8_t Register, uint8_t Data);
+	virtual void readByte(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data);
+	virtual void writeByte(uint8_t Address, uint8_t Register, uint8_t Data);
 
 	uint8_t _addr;
-	
-	mraa::I2c *_i2c;
+
 	double _r;
 	double lastX, lastY, lastZ;
 	

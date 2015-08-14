@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <rtc:RtcProfile rtc:version="0.2" rtc:id="RTC:Miyamoto Nobuhiko:Crawler:CrawlerControllerPWM2:1.0.0" xmlns:rtcExt="http://www.openrtp.org/namespaces/rtc_ext" xmlns:rtcDoc="http://www.openrtp.org/namespaces/rtc_doc" xmlns:rtc="http://www.openrtp.org/namespaces/rtc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <rtc:BasicInfo xsi:type="rtcExt:basic_info_ext" rtcExt:saveProject="CrawlerControllerPWM2" rtc:updateDate="2015-07-18T19:23:08.760+09:00" rtc:creationDate="2015-03-27T23:01:58+09:00" rtc:abstract="クローラーの制御を行うRTCです。 http://robotarmrtc.iaigiri.com/" rtc:version="1.0.0" rtc:vendor="Miyamoto Nobuhiko" rtc:maxInstances="1" rtc:executionType="PeriodicExecutionContext" rtc:executionRate="1000.0" rtc:description="Crawler Controller Component" rtc:category="Crawler" rtc:componentKind="DataFlowComponent" rtc:activityType="PERIODIC" rtc:componentType="STATIC" rtc:name="CrawlerControllerPWM2">
+    <rtc:BasicInfo xsi:type="rtcExt:basic_info_ext" rtcExt:saveProject="CrawlerControllerPWM2" rtc:updateDate="2015-08-13T23:24:54.589+09:00" rtc:creationDate="2015-03-27T23:01:58+09:00" rtc:abstract="クローラーの制御を行うRTCです。  &lt;a href=&quot;http://robotarmrtc.iaigiri.com/&quot; target=&quot;_blank&quot;&gt;マニュアル&lt;/a&gt; " rtc:version="1.0.0" rtc:vendor="Miyamoto Nobuhiko" rtc:maxInstances="1" rtc:executionType="PeriodicExecutionContext" rtc:executionRate="1000.0" rtc:description="Crawler Controller Component" rtc:category="Crawler" rtc:componentKind="DataFlowComponent" rtc:activityType="PERIODIC" rtc:componentType="STATIC" rtc:name="CrawlerControllerPWM2">
         <rtcDoc:Doc rtcDoc:reference="" rtcDoc:license="LGPL" rtcDoc:creator="" rtcDoc:algorithm="" rtcDoc:inout="" rtcDoc:description="クローラーの制御を行うRTCです。 http://robotarmrtc.iaigiri.com/"/>
         <rtcExt:VersionUpLogs></rtcExt:VersionUpLogs>
         <rtcExt:VersionUpLogs></rtcExt:VersionUpLogs>
@@ -65,9 +65,29 @@
             <rtcDoc:Doc rtcDoc:constraint="" rtcDoc:range="" rtcDoc:unit="" rtcDoc:description="1の時はジャイロセンサを使用する" rtcDoc:defaultValue="" rtcDoc:dataname=""/>
             <rtcExt:Properties rtcExt:value="radio" rtcExt:name="__widget__"/>
         </rtc:Configuration>
-        <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="" rtc:unit="" rtc:defaultValue="106" rtc:type="int" rtc:name="gyroSensor_addr">
-            <rtcDoc:Doc rtcDoc:constraint="" rtcDoc:range="" rtcDoc:unit="" rtcDoc:description="L3GD20のI2Cスレーブアドレス" rtcDoc:defaultValue="" rtcDoc:dataname=""/>
-            <rtcExt:Properties rtcExt:value="text" rtcExt:name="__widget__"/>
+        <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="" rtc:unit="" rtc:defaultValue="0x6A" rtc:type="string" rtc:name="gyroSensor_addr">
+            <rtc:Constraint>
+                <rtc:ConstraintUnitType>
+                    <rtc:Or>
+                        <rtc:Constraint>
+                            <rtc:ConstraintUnitType>
+                                <rtc:propertyIsEqualTo rtc:matchCase="false">
+                                    <rtc:Literal>0x6A</rtc:Literal>
+                                </rtc:propertyIsEqualTo>
+                            </rtc:ConstraintUnitType>
+                        </rtc:Constraint>
+                        <rtc:Constraint>
+                            <rtc:ConstraintUnitType>
+                                <rtc:propertyIsEqualTo rtc:matchCase="false">
+                                    <rtc:Literal>0x6B</rtc:Literal>
+                                </rtc:propertyIsEqualTo>
+                            </rtc:ConstraintUnitType>
+                        </rtc:Constraint>
+                    </rtc:Or>
+                </rtc:ConstraintUnitType>
+            </rtc:Constraint>
+            <rtcDoc:Doc rtcDoc:constraint="(0x6A,0x6B)" rtcDoc:range="" rtcDoc:unit="" rtcDoc:description="L3GD20のI2Cスレーブアドレス" rtcDoc:defaultValue="0x6A" rtcDoc:dataname="gyroSensor_addr"/>
+            <rtcExt:Properties rtcExt:value="radio" rtcExt:name="__widget__"/>
         </rtc:Configuration>
         <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="" rtc:unit="" rtc:defaultValue="1" rtc:type="int" rtc:name="rangeSensor0">
             <rtc:Constraint>
@@ -228,14 +248,6 @@
             </rtc:Constraint>
             <rtcDoc:Doc rtcDoc:constraint="" rtcDoc:range="" rtcDoc:unit="" rtcDoc:description="I2Cのポート番号" rtcDoc:defaultValue="" rtcDoc:dataname=""/>
             <rtcExt:Properties rtcExt:value="radio" rtcExt:name="__widget__"/>
-        </rtc:Configuration>
-        <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="" rtc:unit="" rtc:defaultValue="25" rtc:type="int" rtc:name="Acc_addr">
-            <rtcDoc:Doc rtcDoc:constraint="" rtcDoc:range="" rtcDoc:unit="" rtcDoc:description="LSM303DLHCの加速度センサのI2Cスレーブアドレス" rtcDoc:defaultValue="" rtcDoc:dataname=""/>
-            <rtcExt:Properties rtcExt:value="text" rtcExt:name="__widget__"/>
-        </rtc:Configuration>
-        <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="" rtc:unit="" rtc:defaultValue="30" rtc:type="int" rtc:name="Magn_addr">
-            <rtcDoc:Doc rtcDoc:constraint="" rtcDoc:range="" rtcDoc:unit="" rtcDoc:description="LSM303DLHCの地磁気センサのI2Cスレーブアドレス" rtcDoc:defaultValue="" rtcDoc:dataname=""/>
-            <rtcExt:Properties rtcExt:value="text" rtcExt:name="__widget__"/>
         </rtc:Configuration>
         <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="" rtc:unit="" rtc:defaultValue="1.0" rtc:type="double" rtc:name="bias">
             <rtcDoc:Doc rtcDoc:constraint="" rtcDoc:range="" rtcDoc:unit="" rtcDoc:description="障害物が近づいた場合にどの程度旋回を行うか？値が大きくなるほど旋回しやすくなります。" rtcDoc:defaultValue="" rtcDoc:dataname=""/>

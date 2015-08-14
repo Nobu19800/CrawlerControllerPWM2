@@ -19,7 +19,7 @@ static const char* CrawlerControllerPWM2_spec[] =
     "description",       "Crawler Controller Component",
     "version",           "1.0.0",
     "vendor",            "Miyamoto Nobuhiko",
-    "category",          "Crawler",
+    "category",          "TEST",
     "activity_type",     "PERIODIC",
     "kind",              "DataFlowComponent",
     "max_instance",      "1",
@@ -33,7 +33,7 @@ static const char* CrawlerControllerPWM2_spec[] =
     "conf.default.motor1pwm1", "9",
     
     "conf.default.gyroSensor", "1",
-    "conf.default.gyroSensor_addr", "106",
+    "conf.default.gyroSensor_addr", "0x6A",
     "conf.default.rangeSensor0", "1",
     "conf.default.rangeSensor1", "1",
     "conf.default.rangeSensor2", "1",
@@ -44,8 +44,8 @@ static const char* CrawlerControllerPWM2_spec[] =
     "conf.default.rangeSensor3_Pin", "1",
     "conf.default.LSM303DLHC", "1",
     "conf.default.I2C_channel", "1",
-    "conf.default.Acc_addr", "25",
-    "conf.default.Magn_addr", "30",
+    //"conf.default.Acc_addr", "25",
+    //"conf.default.Magn_addr", "30",
     "conf.default.bias", "1.0",
     "conf.default.frontDistance", "0.5",
     "conf.default.backDistance", "0.1",
@@ -58,7 +58,7 @@ static const char* CrawlerControllerPWM2_spec[] =
     "conf.__widget__.motor1pwm0", "text",
     "conf.__widget__.motor1pwm1", "text",
     "conf.__widget__.gyroSensor", "radio",
-    "conf.__widget__.gyroSensor_addr", "text",
+    "conf.__widget__.gyroSensor_addr", "radio",
     "conf.__widget__.rangeSensor0", "radio",
     "conf.__widget__.rangeSensor1", "radio",
     "conf.__widget__.rangeSensor2", "radio",
@@ -69,8 +69,8 @@ static const char* CrawlerControllerPWM2_spec[] =
     "conf.__widget__.rangeSensor3_Pin", "text",
     "conf.__widget__.LSM303DLHC", "radio",
      "conf.__widget__.I2C_channel", "radio",
-    "conf.__widget__.Acc_addr", "text",
-    "conf.__widget__.Magn_addr", "text",
+//    "conf.__widget__.Acc_addr", "text",
+//    "conf.__widget__.Magn_addr", "text",
 
     "conf.__widget__.bias", "text",
     "conf.__widget__.frontDistance", "text",
@@ -81,6 +81,7 @@ static const char* CrawlerControllerPWM2_spec[] =
 
 
     "conf.__constraints__.gyroSensor", "(0,1)",
+    "conf.__constraints__.gyroSensor_addr", "(0x6A,0x6B)",
     "conf.__constraints__.rangeSensor0", "(0,1)",
     "conf.__constraints__.rangeSensor1", "(0,1)",
     "conf.__constraints__.rangeSensor2", "(0,1)",
@@ -175,7 +176,7 @@ RTC::ReturnCode_t CrawlerControllerPWM2::onInitialize()
   bindParameter("motor1pwm1", m_motor1pwm1, "9");
 
   bindParameter("gyroSensor", m_gyroSensor, "1");
-  bindParameter("gyroSensor_addr", m_gyroSensor_addr, "106");
+  bindParameter("gyroSensor_addr", m_gyroSensor_addr, "0x6A");
   bindParameter("rangeSensor0", m_rangeSensor0, "1");
   bindParameter("rangeSensor1", m_rangeSensor1, "1");
   bindParameter("rangeSensor2", m_rangeSensor2, "1");
@@ -185,8 +186,8 @@ RTC::ReturnCode_t CrawlerControllerPWM2::onInitialize()
   bindParameter("rangeSensor2_Pin", m_rangeSensor2_Pin, "0");
   bindParameter("rangeSensor3_Pin", m_rangeSensor3_Pin, "1");
   bindParameter("LSM303DLHC", m_LSM303DLHC, "1");
-  bindParameter("Acc_addr", m_Acc_addr, "25");
-  bindParameter("Magn_addr", m_Magn_addr, "30");
+//  bindParameter("Acc_addr", m_Acc_addr, "25");
+//  bindParameter("Magn_addr", m_Magn_addr, "30");
   bindParameter("I2C_channel", m_I2C_channel, "1");
 
   bindParameter("bias", m_bias, "1.0");
@@ -268,6 +269,7 @@ RTC::ReturnCode_t CrawlerControllerPWM2::onShutdown(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t CrawlerControllerPWM2::onActivated(RTC::UniqueId ec_id)
 {
+	
 	mraa_result_t response;
 	if(_i2c == NULL)
 	{
@@ -280,6 +282,16 @@ RTC::ReturnCode_t CrawlerControllerPWM2::onActivated(RTC::UniqueId ec_id)
 		controller0 = new TA8428K(response, m_motor0pwm0, m_motor0pwm1);
 		if(response != MRAA_SUCCESS)
 		{
+			delete controller0;
+			controller0 = NULL;
+			return RTC::RTC_ERROR;
+		}
+	}
+	else
+	{
+		response = controller0->setPinNum(m_motor0pwm0, m_motor0pwm1);
+		if(response != MRAA_SUCCESS)
+		{
 			return RTC::RTC_ERROR;
 		}
 	}
@@ -288,14 +300,40 @@ RTC::ReturnCode_t CrawlerControllerPWM2::onActivated(RTC::UniqueId ec_id)
 		controller1 = new TA8428K(response, m_motor1pwm0, m_motor1pwm1);
 		if(response != MRAA_SUCCESS)
 		{
+			delete controller1;
+			controller1 = NULL;
 			return RTC::RTC_ERROR;
 		}
 	}
+	else
+	{
+		response = controller1->setPinNum(m_motor1pwm0, m_motor1pwm1);
+		if(response != MRAA_SUCCESS)
+		{
+			return RTC::RTC_ERROR;
+		}
+	}
+
 	if(m_gyroSensor == 1)
 	{
+
+		uint8_t ga;
+		if(m_gyroSensor_addr == "0x6A")ga = 0x6A;
+		else ga = 0x6B;
+
 		if(gyroSensor == NULL)
 		{
-			gyroSensor = new L3GD20(_i2c, _smf, m_gyroSensor_addr);
+			gyroSensor = new L3GD20_I2C(response, _i2c, _smf, ga);
+			if(response != MRAA_SUCCESS)
+			{
+				delete gyroSensor;
+				gyroSensor = NULL;
+				return RTC::RTC_ERROR;
+			}
+		}
+		else
+		{
+			response = gyroSensor->setAddr(ga);
 			if(response != MRAA_SUCCESS)
 			{
 				return RTC::RTC_ERROR;
@@ -310,6 +348,16 @@ RTC::ReturnCode_t CrawlerControllerPWM2::onActivated(RTC::UniqueId ec_id)
 			rangeSensor0 = new GP2Y0A21YK(response, m_rangeSensor0_Pin);
 			if(response != MRAA_SUCCESS)
 			{
+				delete rangeSensor0;
+				rangeSensor0 = NULL;
+				return RTC::RTC_ERROR;
+			}
+		}
+		else
+		{
+			response = rangeSensor0->setPinNum(m_rangeSensor0_Pin);
+			if(response != MRAA_SUCCESS)
+			{
 				return RTC::RTC_ERROR;
 			}
 		}
@@ -319,6 +367,16 @@ RTC::ReturnCode_t CrawlerControllerPWM2::onActivated(RTC::UniqueId ec_id)
 		if(rangeSensor1 == NULL)
 		{
 			rangeSensor1 = new GP2Y0A21YK(response, m_rangeSensor1_Pin);
+			if(response != MRAA_SUCCESS)
+			{
+				delete rangeSensor1;
+				rangeSensor1 = NULL;
+				return RTC::RTC_ERROR;
+			}
+		}
+		else
+		{
+			response = rangeSensor1->setPinNum(m_rangeSensor1_Pin);
 			if(response != MRAA_SUCCESS)
 			{
 				return RTC::RTC_ERROR;
@@ -332,6 +390,16 @@ RTC::ReturnCode_t CrawlerControllerPWM2::onActivated(RTC::UniqueId ec_id)
 			rangeSensor2 = new GP2Y0A21YK(response, m_rangeSensor2_Pin);
 			if(response != MRAA_SUCCESS)
 			{
+				delete rangeSensor2;
+				rangeSensor2 = NULL;
+				return RTC::RTC_ERROR;
+			}
+		}
+		else
+		{
+			response = rangeSensor2->setPinNum(m_rangeSensor2_Pin);
+			if(response != MRAA_SUCCESS)
+			{
 				return RTC::RTC_ERROR;
 			}
 		}
@@ -343,6 +411,16 @@ RTC::ReturnCode_t CrawlerControllerPWM2::onActivated(RTC::UniqueId ec_id)
 			rangeSensor3 = new GP2Y0A21YK(response, m_rangeSensor3_Pin);
 			if(response != MRAA_SUCCESS)
 			{
+				delete rangeSensor3;
+				rangeSensor3 = NULL;
+				return RTC::RTC_ERROR;
+			}
+		}
+		else
+		{
+			response = rangeSensor3->setPinNum(m_rangeSensor3_Pin);
+			if(response != MRAA_SUCCESS)
+			{
 				return RTC::RTC_ERROR;
 			}
 		}
@@ -351,8 +429,26 @@ RTC::ReturnCode_t CrawlerControllerPWM2::onActivated(RTC::UniqueId ec_id)
 	{
 		if(accSensor == NULL)
 		{
-			accSensor = new LSM303DLHC(_i2c, _smf, m_Acc_addr, m_Magn_addr);
-			
+			accSensor = new LSM303DLHC(response, _i2c, _smf, LSM303DLHC_AccAddress, LSM303DLHC_MagAddress);
+			if(response != MRAA_SUCCESS)
+			{
+				delete accSensor;
+				accSensor = NULL;
+				return RTC::RTC_ERROR;
+			}
+		}
+		else
+		{
+			response = accSensor->setAccAddr(LSM303DLHC_AccAddress);
+			if(response != MRAA_SUCCESS)
+			{
+				return RTC::RTC_ERROR;
+			}
+			response = accSensor->setMagnAddr(LSM303DLHC_MagAddress);
+			if(response != MRAA_SUCCESS)
+			{
+				return RTC::RTC_ERROR;
+			}
 		}
 	}
 

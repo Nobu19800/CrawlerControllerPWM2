@@ -15,11 +15,14 @@ public:
 	double getDistance();
 	double getDistanceData();
 	double voltage2distance(double dVolt);
+	mraa_result_t setPinNum(int pin = 0);
+	void setCoefficient(double r = 0.2);
 	
 private:
 	mraa::Aio* a;
 	double lastDistance;
 	double _r;
+	int m_pin;
 };
 
 
