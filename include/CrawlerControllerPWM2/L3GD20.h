@@ -1,3 +1,11 @@
+/*!
+ * @file  L3GD20.h
+ * 定数名はhttps://github.com/adafruit/Adafruit_L3GD20/blob/master/Adafruit_L3GD20.h(BSDライセンス)から引用
+ * @brief ジャイロセンサL3GD20の通信関連のクラス
+ *
+ */
+
+
 #ifndef L3GD20_H
 #define L3GD20_H
 
@@ -9,25 +17,73 @@
 
 
  
-
+/**
+ * @class L3GD20
+*@brief ジャイロセンサL3GD20の通信関連のクラス
+*/
 class L3GD20
 {
 public:
+	/**
+	*@brief コンストラクタ
+	* @param smf セマフォ操作オブジェクト
+	* @param addr アドレス(SPI通信の場合はデフォルトのI2Cアドレスを指定しておく)
+	* @param scale スケール
+	* @param r IIRフィルタの係数
+	*/
 	L3GD20(i2c_smf *smf, uint8_t addr = 0x6a, uint8_t scale = 0, double r = 0.2);
+	/**
+	*@brief デストラクタ
+	*/
 	virtual ~L3GD20();
+	/**
+	*@brief センサの存在確認
+	* @return 存在する場合true、存在しない場合false
+	*/
 	virtual bool sensor_Exist();
+	/**
+	*@brief 初期化
+	*/
 	virtual void reset(void);
+	/**
+	*@brief 計測した角速度取得
+	* @param avx 角速度(X)
+	* @param avy 角速度(Y)
+	* @param avz 角速度(Z)
+	*/
 	virtual void getGyroData(double &avx, double &avy, double &avz);
+	/**
+	*@brief 計測した角速度取得(オフセット有り)
+	* @param avx 角速度(X)
+	* @param avy 角速度(Y)
+	* @param avz 角速度(Z)
+	*/
 	virtual void getGyro(double &avx, double &avy, double &avz);
+	/**
+	*@brief アドレス再設定
+	* @param addr I2Cアドレス
+	* @return 成功でMRAA_SUCCESS、それ以外は失敗
+	*/
 	virtual mraa_result_t setAddr(uint8_t addr = 0x6a);
+	/**
+	*@brief センサスケール再設定
+	* @param scale スケール
+	*/
 	virtual void setScale(uint8_t scale = 0);
+	/**
+	*@brief フィルタ係数再設定
+	* @param r 係数
+	*/
 	virtual void setCoefficient(double r = 0.2);
 
 	
 	
 	
 	
-
+	/**
+	*@brief スケールを反映
+	* @param scale スケール
+	*/
 	virtual void setRange(uint8_t scale);
 	
 	
@@ -93,8 +149,20 @@ public:
 protected:
 	
 	//int _i2channel;
-
+	/**
+	*@brief 特定レジスタに書き込んで値を読み込む
+	* @param Address I2Cアドレス(SPI通信の場合はセンサの判別に利用するのでアドレスのデフォルト値を入力)
+	* @param Register レジスタ
+	* @param Nbytes 読み込むデータの長さ
+	* @param Data 読み込んだデータ
+	*/
 	virtual void readByte(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data);
+	/**
+	*@brief 特定レジスタに書き込む
+	* @param Address I2Cアドレス(SPI通信の場合はセンサの判別に利用するのでアドレスのデフォルト値を入力)
+	* @param Register レジスタ
+	* @param Data 書き込むデータ
+	*/
 	virtual void writeByte(uint8_t Address, uint8_t Register, uint8_t Data);
 
 	uint8_t _addr;

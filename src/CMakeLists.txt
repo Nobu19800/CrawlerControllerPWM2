@@ -1,4 +1,6 @@
-set(comp_srcs CrawlerControllerPWM2.cpp TA8428K.cpp L3GD20.cpp L3GD20_I2C.cpp GP2Y0A21YK.cpp LSM303DLHC.cpp i2c_smf.cpp )
+set(smf_file_path ../i2c_smf)
+
+set(comp_srcs CrawlerControllerPWM2.cpp TA8428K.cpp L3GD20.cpp L3GD20_I2C.cpp GP2Y0A21YK.cpp LSM303DLHC.cpp ${smf_file_path}/i2c_smf.cpp )
 set(standalone_srcs CrawlerControllerPWM2Comp.cpp)
 
 if (DEFINED OPENRTM_INCLUDE_DIRS)
@@ -28,6 +30,7 @@ include_directories(${PROJECT_BINARY_DIR})
 include_directories(${PROJECT_BINARY_DIR}/idl)
 include_directories(${OPENRTM_INCLUDE_DIRS})
 include_directories(${OMNIORB_INCLUDE_DIRS})
+include_directories(${smf_file_path})
 add_definitions(${OPENRTM_CFLAGS})
 add_definitions(${OMNIORB_CFLAGS})
 

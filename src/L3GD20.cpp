@@ -1,3 +1,9 @@
+/*!
+ * @file  L3GD20.cpp
+ * @brief ジャイロセンサL3GD20の通信関連のクラス
+ *
+ */
+
 #define _USE_MATH_DEFINES
 #include <stdio.h>
 #include <unistd.h>
@@ -11,6 +17,14 @@
 
 #define L3GD20_WHO_ID  0xD4
 
+
+/**
+*@brief ジャイロセンサL3GD20の通信関連のクラスのコンストラクタ
+* @param smf セマフォ操作オブジェクト
+* @param addr アドレス(SPI通信の場合はデフォルトのI2Cアドレスを指定しておく)
+* @param scale スケール
+* @param r IIRフィルタの係数
+*/
 L3GD20::L3GD20(i2c_smf *smf, uint8_t addr, uint8_t scale, double r) {
 
 	_r = r;
@@ -24,10 +38,17 @@ L3GD20::L3GD20(i2c_smf *smf, uint8_t addr, uint8_t scale, double r) {
 
 }
 
+/**
+*@brief ジャイロセンサL3GD20の通信関連のクラスのデストラクタ
+*/
 L3GD20::~L3GD20() {
 	//delete _smf;
 }
 
+/**
+*@brief センサの存在確認
+* @return 存在する場合true、存在しない場合false
+*/
 bool L3GD20::sensor_Exist() {
 	uint8_t Buf[2];
 	readByte(_addr,WHO_AM_I,1,Buf);
@@ -38,6 +59,11 @@ bool L3GD20::sensor_Exist() {
 	return true;
 }
 
+/**
+*@brief アドレス再設定
+* @param addr I2Cアドレス
+* @return 成功でMRAA_SUCCESS、それ以外は失敗
+*/
 mraa_result_t L3GD20::setAddr(uint8_t addr)
 {
 	if(_addr != addr)
@@ -49,6 +75,10 @@ mraa_result_t L3GD20::setAddr(uint8_t addr)
 	return MRAA_SUCCESS;
 }
 
+/**
+*@brief センサスケール再設定
+* @param scale スケール
+*/
 void L3GD20::setScale(uint8_t scale)
 {
 	if(_scale != scale)
@@ -58,12 +88,19 @@ void L3GD20::setScale(uint8_t scale)
 	}
 }
 
+/**
+*@brief フィルタ係数再設定
+* @param r 係数
+*/
 void L3GD20::setCoefficient(double r)
 {
 	_r = r;
 }
 
-
+/**
+*@brief スケールを反映
+* @param scale スケール
+*/
 void L3GD20::setRange(uint8_t scale)
 {
 	_scale = scale;
@@ -74,7 +111,9 @@ void L3GD20::setRange(uint8_t scale)
 
 
 
-
+/**
+*@brief 初期化
+*/
 void L3GD20::reset(void) {
 	
 	
@@ -120,7 +159,12 @@ void L3GD20::reset(void) {
 }
 
 
-
+/**
+*@brief 計測した角速度取得(オフセット有り)
+* @param avx 角速度(X)
+* @param avy 角速度(Y)
+* @param avz 角速度(Z)
+*/
 void L3GD20::getGyro(double &avx, double &avy, double &avz)
 {
 	getGyroData(avx,avy,avz);
@@ -133,7 +177,12 @@ void L3GD20::getGyro(double &avx, double &avy, double &avz)
 }
 
 
-
+/**
+*@brief 計測した角速度取得
+* @param avx 角速度(X)
+* @param avy 角速度(Y)
+* @param avz 角速度(Z)
+*/
 void L3GD20::getGyroData(double &avx, double &avy, double &avz) {
 
 
@@ -187,12 +236,24 @@ void L3GD20::getGyroData(double &avx, double &avy, double &avz) {
 	
 }
 
-
+/**
+*@brief 特定レジスタに書き込んで値を読み込む
+* @param Address I2Cアドレス(SPI通信の場合はセンサの判別に利用するのでアドレスのデフォルト値を入力)
+* @param Register レジスタ
+* @param Nbytes 読み込むデータの長さ
+* @param Data 読み込んだデータ
+*/
 void L3GD20::readByte(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data)
 {
 
 }
 
+/**
+*@brief 特定レジスタに書き込む
+* @param Address I2Cアドレス(SPI通信の場合はセンサの判別に利用するのでアドレスのデフォルト値を入力)
+* @param Register レジスタ
+* @param Data 書き込むデータ
+*/
 void L3GD20::writeByte(uint8_t Address, uint8_t Register, uint8_t Data)
 {
 

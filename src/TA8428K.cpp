@@ -1,3 +1,9 @@
+/*!
+ * @file  TA8428K.cpp
+ * @brief モータードライバTA8428Kの制御関連のクラス
+ *
+ */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -5,6 +11,13 @@
 
 #include "TA8428K.h"
 
+
+/**
+*@brief モータードライバTA8428Kの制御関連のクラスのコンストラクタ
+* @param response 初期化成功でMRAA_SUCCESS、それ以外は失敗
+* @param pwm_pin0 PWMピンの番号(TA8428KのIN1に接続)
+* @param pwm_pin1 PWMピンの番号(TA8428KのIN2に接続)
+*/
 TA8428K::TA8428K(mraa_result_t &response, int pwm_pin0, int pwm_pin1) {
 	m_pin0 = pwm_pin0;
 	pwm0 = new mraa::Pwm(pwm_pin0);
@@ -28,6 +41,9 @@ TA8428K::TA8428K(mraa_result_t &response, int pwm_pin0, int pwm_pin1) {
 	
 }
 
+/**
+*@brief モータードライバTA8428Kの制御関連のクラスのデストラクタ
+*/
 TA8428K::~TA8428K() {
 	if(pwm0)
 	{
@@ -46,6 +62,12 @@ TA8428K::~TA8428K() {
 	
 }
 
+/**
+*@brief PWMピンの番号の再設定
+* @param pwm_pin0 PWMピンの番号(TA8428KのIN1に接続)
+* @param pwm_pin1 PWMピンの番号(TA8428KのIN2に接続)
+* @return 初期化成功でMRAA_SUCCESS、それ以外は失敗
+*/
 mraa_result_t TA8428K::setPinNum(int pwm_pin0, int pwm_pin1)
 {
 	if(m_pin0 != pwm_pin0)
@@ -84,7 +106,10 @@ mraa_result_t TA8428K::setPinNum(int pwm_pin0, int pwm_pin1)
 	return MRAA_SUCCESS;
 }
 
-
+/**
+*@brief TA8428Kの出力のデューティー比を設定
+* @param vol デューティー比
+*/
 void TA8428K::setValue(double vol) {
 
 	//std::cout << vol << std::endl;
