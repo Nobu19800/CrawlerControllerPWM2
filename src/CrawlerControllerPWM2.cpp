@@ -50,7 +50,7 @@ static const char* CrawlerControllerPWM2_spec[] =
     "conf.default.frontDistance", "0.5",
     "conf.default.backDistance", "0.1",
     "conf.default.filter", "0.05",
-    "conf.default.rotOffset", "0.5",
+    "conf.default.rotOffset", "3.64",
     "conf.default.rotCorVal", "15",
     // Widget
     "conf.__widget__.motor0pwm0", "text",
@@ -194,7 +194,7 @@ RTC::ReturnCode_t CrawlerControllerPWM2::onInitialize()
   bindParameter("frontDistance", m_frontDistance, "0.5");
   bindParameter("backDistance", m_backDistance, "0.1");
   bindParameter("filter", m_filter, "0.05");
-  bindParameter("rotOffset", m_rotOffset, "0.5");
+  bindParameter("rotOffset", m_rotOffset, "3.64");
   bindParameter("rotCorVal", m_rotCorVal, "15");
 
   _smf = new i2c_smf();
@@ -713,6 +713,7 @@ void CrawlerControllerPWM2::writeRangeSensor(double &rn0, double &rn1, double &r
 	{
 		rn0 = rangeSensor0->getDistance();
 		m_range0.data = rn0;
+		setTimestamp(m_range0);
 		m_range0Out.write();
 	}
 	
@@ -720,6 +721,7 @@ void CrawlerControllerPWM2::writeRangeSensor(double &rn0, double &rn1, double &r
 	{
 		rn1 = rangeSensor1->getDistance();
 		m_range1.data = rn1;
+		setTimestamp(m_range1);
 		m_range1Out.write();
 	}
 
@@ -727,6 +729,7 @@ void CrawlerControllerPWM2::writeRangeSensor(double &rn0, double &rn1, double &r
 	{
 		rn2 = rangeSensor2->getDistance();
 		m_range2.data = rn2;
+		setTimestamp(m_range2);
 		m_range2Out.write();
 	}
 
@@ -734,6 +737,7 @@ void CrawlerControllerPWM2::writeRangeSensor(double &rn0, double &rn1, double &r
 	{
 		rn3 = rangeSensor3->getDistance();
 		m_range3.data = rn3;
+		setTimestamp(m_range3);
 		m_range3Out.write();
 	}
 
@@ -751,7 +755,7 @@ void CrawlerControllerPWM2::writeGyroSensor(double &avx, double &avy, double &av
 		m_gyro.data.avx = avx;
 		m_gyro.data.avy = avy;
 		m_gyro.data.avz = avz;
-		
+		setTimestamp(m_gyro);
 		m_gyroOut.write();
 	}
 }
@@ -781,6 +785,7 @@ void CrawlerControllerPWM2::writeLSM303DLHC(double trans_speed, double &ax, doub
 		m_acc.data.ax = ax;
 		m_acc.data.ay = ay;
 		m_acc.data.az = az;
+		setTimestamp(m_acc);
 		m_accOut.write();
 
 		
@@ -791,9 +796,11 @@ void CrawlerControllerPWM2::writeLSM303DLHC(double trans_speed, double &ax, doub
 		m_magn.data[0] = mx;
 		m_magn.data[1] = my;
 		m_magn.data[2] = mz;
+		setTimestamp(m_magn);
 		m_magnOut.write();
 
 		m_temp.data = 0;//accSensor->getTemp();
+		setTimestamp(m_temp);
 		m_tempOut.write();
 
 		
@@ -806,6 +813,7 @@ void CrawlerControllerPWM2::writeLSM303DLHC(double trans_speed, double &ax, doub
 		m_pos.data.position.x = last_posx;
 		m_pos.data.position.y = last_posy;
 		m_pos.data.heading = rz-m_rotOffset;
+		setTimestamp(m_pos);
 		m_posOut.write();
 
 		
